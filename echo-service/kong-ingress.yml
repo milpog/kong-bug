@@ -1,0 +1,20 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: echo-service
+  namespace: default
+  annotations:
+    konghq.com/plugins: echo-service-rate-limit,echo-service-key-auth
+spec:
+  ingressClassName: kong
+  rules:
+    - host: test.example.com
+      http:
+        paths:
+          - path: /
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: echo-service
+                port:
+                  number: 80

@@ -1,0 +1,22 @@
+apiVersion: configuration.konghq.com/v1
+kind: KongPlugin
+metadata:
+  name: echo-service-rate-limit
+  namespace: default
+plugin: rate-limiting-advanced
+config:
+  namespace: echo-service
+  consumer_groups:
+    - premium
+  enforce_consumer_groups: true
+  sync_rate: 0.25
+  identifier: consumer
+  limit:
+    - 10
+  window_size:
+    - 60
+  window_type: fixed
+  strategy: redis
+  redis:
+    host: redis-master.default.svc.cluster.local
+    port: 6379

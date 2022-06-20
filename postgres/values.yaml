@@ -1,0 +1,7 @@
+image:
+  tag: 13.7.0-debian-11-r7
+
+auth:
+  username: kong
+  password: kong
+  database: kong

@@ -1,0 +1,73 @@
+cluster:
+  enabled: true
+  tls:
+    enabled: true
+    servicePort: 8005
+    containerPort: 8005
+
+secretVolumes:
+  - kong-cluster-cert
+
+admin:
+  enabled: true
+  type: ClusterIP
+  tls:
+    # FIXME: https://github.com/Kong/kubernetes-ingress-controller/issues/2435
+    parameters: []
+
+proxy:
+  enabled: false
+
+env:
+  role: control_plane
+  cluster_cert: /etc/secrets/kong-cluster-cert/tls.crt
+  cluster_cert_key: /etc/secrets/kong-cluster-cert/tls.key
+  database: "postgres"
+  pg_host: "postgres-postgresql.default.svc.cluster.local"
+  pg_port: "5432"
+  pg_user: "kong"
+  pg_password: "kong"
+  pg_database: "kong"
+  pg_schema: "public"
+  admin_ssl_cert: /etc/secrets/kong-cluster-cert/tls.crt
+  admin_ssl_cert_key: /etc/secrets/kong-cluster-cert/tls.key
+
+migrations:
+  # Enable pre-upgrade migrations (run "kong migrations up")
+  preUpgrade: true
+  # Enable post-upgrade migrations (run "kong migrations finish")
+  postUpgrade: true
+
+ingressController:
+  enabled: true
+  installCRDs: false
+  image:
+    repository: kong/kubernetes-ingress-controller
+    tag: "2.3"
+  env:
+    publish_service: kong/data-plane-kong-proxy
+
+# enterprise config
+image:
+  repository: kong/kong-gateway
+  tag: "2.8"
+
+enterprise:
+  enabled: true
+  license_secret: kong-enterprise-license
+  vitals:
+    enabled: false
+
+clustertelemetry:
+  enabled: true
+  tls:
+    enabled: true
+
+portal:
+  enabled: false
+
+portalapi:
+  enabled: false
+
+manager:
+  enabled: false

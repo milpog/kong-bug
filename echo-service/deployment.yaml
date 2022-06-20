@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: echo-service
+  name: echo-service
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: echo-service
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: echo-service
+    spec:
+      containers:
+      - image: nginx:1.21.6
+        name: nginx
+        resources: {}

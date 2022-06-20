@@ -1,0 +1,37 @@
+---
+apiVersion: configuration.konghq.com/v1
+kind: KongPlugin
+metadata:
+  name: echo-service-key-auth
+  namespace: default
+plugin: key-auth
+config:
+  key_names:
+    - authorization
+  key_in_body: false
+  key_in_header: true
+  key_in_query: true
+  run_on_preflight: true
+  # fall back to anonymous consumer. Must be specified in all plugins
+  anonymous: anonymous
+---
+apiVersion: configuration.konghq.com/v1
+kind: KongPlugin
+metadata:
+  name: request-termination
+  namespace: default
+plugin: request-termination
+config:
+  # if the user is anonymous, terminate the request
+  status_code: 401
+---
+apiVersion: configuration.konghq.com/v1
+kind: KongConsumer
+metadata:
+  name: anonymous
+  namespace: default
+  annotations:
+    kubernetes.io/ingress.class: kong
+    # if the user is anonymous, terminate the request
+    konghq.com/plugins: request-termination
+

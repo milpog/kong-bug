@@ -1,0 +1,45 @@
+admin:
+  enabled: false
+
+secretVolumes:
+  - kong-cluster-cert
+
+env:
+  # https://docs.konghq.com/kubernetes-ingress-controller/2.3.x/guides/preserve-client-ip/#proxy-protocol
+  trusted_ips: "0.0.0.0/0" # vpc cidr block
+  real_ip_header: proxy_protocol # we want to retrieve real IP addresses not the NLB one
+  headers: "off"
+  role: data_plane
+  database: "off"
+  cluster_cert: /etc/secrets/kong-cluster-cert/tls.crt
+  cluster_cert_key: /etc/secrets/kong-cluster-cert/tls.key
+  lua_ssl_trusted_certificate: /etc/secrets/kong-cluster-cert/tls.crt
+  cluster_control_plane: control-plane-kong-cluster.kong.svc.cluster.local:8005
+  cluster_telemetry_endpoint: control-plane-kong-clustertelemetry.kong.svc.cluster.local:8006
+
+ingressController:
+  enabled: false
+  installCRDs: false
+
+proxy:
+  externalTrafficPolicy: Cluster
+
+# enterprise config
+image:
+  repository: kong/kong-gateway
+  tag: "2.8"
+
+enterprise:
+  enabled: true
+  license_secret: kong-enterprise-license
+  vitals:
+    enabled: false
+
+manager:
+  enabled: false
+
+portal:
+  enabled: false
+
+portalapi:
+  enabled: false
